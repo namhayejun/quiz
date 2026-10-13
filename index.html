@@ -3,363 +3,227 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>과테말라 상식 퀴즈</title>
 <style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: Arial, "Malgun Gothic", sans-serif;
-    background: linear-gradient(135deg, #d8f3ff, #e9e2ff);
-    color: #202b45;
-  }
-  .app {
-    min-height: 100vh;
-    width: 100%;
-    padding: clamp(20px, 5vw, 60px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .card {
-    width: 100%;
-    max-width: 1000px;
-    background: white;
-    border-radius: 28px;
-    padding: clamp(24px, 5vw, 60px);
-    box-shadow: 0 18px 55px #26365a20;
-  }
-  .flag {
-    font-size: clamp(36px, 6vw, 58px);
-    text-align: center;
-  }
-  h1 {
-    font-size: clamp(30px, 5vw, 48px);
-    text-align: center;
-    margin: 12px 0;
-  }
-  .subtitle {
-    text-align: center;
-    color: #65718b;
-    font-size: clamp(15px, 2vw, 19px);
-    margin-bottom: 32px;
-  }
-  .label {
-    color: #53617c;
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 12px;
-  }
-  .question {
-    font-size: clamp(23px, 4vw, 36px);
-    line-height: 1.55;
-    font-weight: bold;
-    margin: 12px 0 30px;
-    word-break: keep-all;
-  }
-  input {
-    width: 100%;
-    padding: 20px;
-    font-size: 20px;
-    border: 2px solid #d9e0ef;
-    border-radius: 15px;
-    outline: none;
-    transition: border .2s;
-  }
-  input:focus { border-color: #6375e8; }
-  .hint {
-    color: #78839b;
-    font-size: 14px;
-    margin-top: 10px;
-  }
-  .buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 24px;
-  }
-  button {
-    flex: 1;
-    min-width: 150px;
-    padding: 17px 20px;
-    border: 0;
-    border-radius: 14px;
-    font-size: 17px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform .15s, opacity .15s;
-  }
-  button:hover { transform: translateY(-2px); }
-  button:disabled { opacity: .55; cursor: not-allowed; }
-  .check { background: #5368e8; color: white; }
-  .next { background: #e9edff; color: #3e50bb; }
-  .result {
-    display: none;
-    margin-top: 26px;
-    padding: 22px;
-    border-radius: 16px;
-    line-height: 1.7;
-    font-size: 17px;
-    overflow-wrap: anywhere;
-  }
-  .result.correct { display: block; background: #e5f8eb; color: #176c3b; }
-  .result.wrong { display: block; background: #fff0e7; color: #93451f; }
-  .answer { font-size: 20px; font-weight: bold; margin-top: 8px; }
-  .footer {
-    text-align: center;
-    color: #7a829a;
-    font-size: 13px;
-    margin-top: 24px;
-  }
-  @media (max-width: 500px) {
-    .app { padding: 12px; }
-    .card { border-radius: 20px; }
-    button { min-width: 100%; }
-  }
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Malgun Gothic",sans-serif;background:linear-gradient(135deg,#d9f1ff,#e8e4ff);color:#202b45}
+main{min-height:100vh;display:grid;place-items:center;padding:24px}
+.card{background:white;width:100%;max-width:1000px;padding:clamp(24px,5vw,60px);border-radius:28px;box-shadow:0 15px 50px #26365a22}
+.flag{text-align:center;font-size:52px}
+h1{text-align:center;font-size:clamp(30px,5vw,46px);margin:12px 0}
+.sub{text-align:center;color:#65718b;margin-bottom:38px}
+.tag{font-weight:bold;color:#5868d9}
+#question{font-size:clamp(24px,4vw,36px);font-weight:bold;line-height:1.6;margin:18px 0 30px;word-break:keep-all}
+input{width:100%;padding:19px;font-size:20px;border:2px solid #dce2f0;border-radius:14px;outline:none}
+input:focus{border-color:#5868e8}
+.hint{font-size:14px;color:#77819a;margin-top:10px}
+.buttons{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+button{flex:1;min-width:150px;padding:17px;border:0;border-radius:13px;font-size:17px;font-weight:bold;cursor:pointer}
+#check{background:#5868e8;color:white}
+#next{background:#e9edff;color:#4052b9}
+button:disabled{opacity:.5;cursor:not-allowed}
+#result{display:none;margin-top:24px;padding:22px;border-radius:15px;font-size:18px;line-height:1.7;overflow-wrap:anywhere}
+#result.show{display:block}
+#result.good{background:#e5f8eb;color:#176c3b}
+#result.bad{background:#fff0e7;color:#93451f}
+#correctAnswer{font-weight:bold;font-size:21px;margin-top:8px}
+footer{text-align:center;color:#8991a6;font-size:13px;margin-top:25px}
+@media(max-width:500px){main{padding:12px}.card{border-radius:20px}.buttons button{min-width:100%}}
 </style>
 </head>
 <body>
-<main class="app">
-  <section class="card">
-    <div class="flag">🇬🇹</div>
-    <h1>과테말라 상식 퀴즈</h1>
-    <p class="subtitle">과테말라에 대해 얼마나 알고 있을까?</p>
+<main>
+<section class="card">
+  <div class="flag">🇬🇹</div>
+  <h1>과테말라 상식 퀴즈</h1>
+  <p class="sub">과테말라에 대해 얼마나 알고 있을까?</p>
 
-    <div class="label" id="questionNumber">무작위 출제</div>
-    <div class="question" id="question">문제를 불러오는 중...</div>
+  <div class="tag">🎲 무작위 주관식 퀴즈</div>
+  <div id="question"></div>
 
-    <form id="quizForm">
-      <label class="label" for="answerInput">정답 입력하기</label>
-      <input
-        id="answerInput"
-        type="text"
-        placeholder="정답을 입력하세요"
-        autocomplete="off"
-        required
-      >
-      <div class="hint" id="inputHint">
-        주관식 문제예요. 답을 입력하고 정답 확인을 눌러 보세요!
-      </div>
-      <div class="buttons">
-        <button class="check" id="checkButton" type="submit">정답 확인</button>
-        <button class="next" id="nextButton" type="button">🎲 다시 추첨</button>
-      </div>
-    </form>
+  <form id="form">
+    <label for="answer" class="tag">정답 입력</label>
+    <input id="answer" type="text" placeholder="여기에 답을 입력하세요" required>
+    <div id="hint" class="hint"></div>
+    <div class="buttons">
+      <button id="check" type="submit">정답 확인</button>
+      <button id="next" type="button">다른 문제 뽑기 ↻</button>
+    </div>
+  </form>
 
-    <div id="result" class="result" aria-live="polite"></div>
-    <div class="footer">GUATEMALA QUIZ · 도전해 보세요!</div>
-  </section>
+  <div id="result" aria-live="polite">
+    <div id="feedback"></div>
+    <div id="correctAnswer"></div>
+  </div>
+  <footer>GUATEMALA QUIZ</footer>
+</section>
 </main>
 
 <script>
 const questions = [
   {
-    question: "과테말라의 인구는 대략 몇 명일까요?",
-    answers: ["약 1,700만 명", "1700만명", "약1700만명", "1천700만명"],
-    hint: "숫자와 '만 명'으로 입력해도 돼요."
+    q:"과테말라의 인구는 대략 몇 명일까요?",
+    a:["약 1,700만 명","약 1700만명","1700만명","1천700만명","1700만"],
+    hint:"약 1,700만 명처럼 입력하세요."
   },
   {
-    question: "과테말라에서 스페인어로 '안녕하세요'는 무엇일까요?",
-    answers: ["Hola", "올라"],
-    hint: "스페인어 인사말을 입력하세요."
+    q:"과테말라에서 '안녕하세요'는 무엇일까요?",
+    a:["Hola","올라"],
+    hint:"스페인어 인사말을 입력하세요."
   },
   {
-    question: "과테말라의 거대한 연 축제는 보통 몇 월에 열릴까요?",
-    answers: ["11월", "11", "November"],
-    hint: "월 또는 숫자로 입력하세요."
+    q:"거대한 연 축제는 보통 몇 월에 열릴까요?",
+    a:["11월","11","November"],
+    hint:"월이나 숫자로 입력하세요."
   },
   {
-    question: "과테말라에서 즐기는 'Canicas'는 어떤 놀이일까요?",
-    answers: ["구슬치기", "구슬 놀이", "구슬", "마블"],
-    hint: "놀이 이름을 입력하세요."
+    q:"Canicas는 어떤 놀이일까요?",
+    a:["구슬치기","구슬 치기","구슬놀이","구슬 놀이","구슬"],
+    hint:"놀이의 이름을 입력하세요."
   },
   {
-    question: "과테말라의 유명한 호수 이름은 무엇일까요?",
-    answers: ["아티틀란 호수", "아티틀란", "Lake Atitlan", "Atitlan", "아티틀란호"],
-    hint: "호수의 이름을 입력하세요."
+    q:"과테말라의 유명한 호수 이름은 무엇일까요?",
+    a:["아티틀란 호수","아티틀란호수","아티틀란","Lake Atitlan","Atitlan","아티틀란호"],
+    hint:"호수 이름을 입력하세요."
   },
   {
-    question: "자료에 나온 과테말라 음식 세 가지는 무엇일까요?",
-    answers: [],
-    foods: [
-      ["따말", "타말", "tamale", "tamales"],
-      ["페피안", "pepian", "pepián"],
-      ["까끼익", "카끼익", "kakik", "kaqik", "kak'ik"]
-    ],
-    hint: "따말, 페피안, 까끼익을 모두 입력하세요. 순서는 상관없어요."
+    q:"자료에 나온 과테말라 음식 세 가지는 무엇일까요?",
+    a:[],
+    foods:[["따말","타말"],["페피안"],["까끼익","카끼익"]],
+    hint:"따말, 페피안, 까끼익 세 가지를 모두 입력하세요."
   },
   {
-    question: "과테말라의 면적은 몇 km²일까요?",
-    answers: ["108889", "108,889"],
-    hint: "예: 108,889 (쉼표를 넣어도 되고 생략해도 돼요.)",
-    area: true
+    q:"과테말라의 면적은 몇 km²일까요?",
+    a:["108889","108,889"],
+    hint:"108,889처럼 천 단위 쉼표를 넣어도 돼요."
   },
   {
-    question: "과테말라의 수도는 어디일까요?",
-    answers: ["과테말라시티", "과테말라 시티", "Guatemala City", "GuatemalaCity"],
-    hint: "수도 이름을 입력하세요."
+    q:"과테말라의 수도는 어디일까요?",
+    a:["과테말라시티","과테말라 시티","Guatemala City","GuatemalaCity"],
+    hint:"수도 이름을 입력하세요."
   },
   {
-    question: "과테말라의 주요 종교는 무엇일까요?",
-    answers: ["기독교", "그리스도교", "Christianity", "가톨릭과 개신교", "가톨릭 및 개신교"],
-    hint: "큰 범주의 종교 이름을 입력하세요."
+    q:"과테말라의 주요 종교는 무엇일까요?",
+    a:["기독교","그리스도교","Christianity","가톨릭과 개신교","가톨릭 및 개신교"],
+    hint:"주요 종교를 입력하세요."
   },
   {
-    question: "과테말라에서 사용하는 화폐의 이름은 무엇일까요?",
-    answers: ["케찰", "퀘찰", "Quetzal", "Quetzales"],
-    hint: "화폐 이름을 입력하세요."
+    q:"과테말라에서 사용하는 화폐의 이름은 무엇일까요?",
+    a:["케찰","퀘찰","Quetzal","Quetzales"],
+    hint:"화폐 이름을 입력하세요."
   }
 ];
 
-let currentQuestion = null;
+const $ = id => document.getElementById(id);
+let current;
+let previous = -1;
 let answered = false;
-let previousIndex = -1;
 
-const questionEl = document.getElementById("question");
-const numberEl = document.getElementById("questionNumber");
-const inputEl = document.getElementById("answerInput");
-const hintEl = document.getElementById("inputHint");
-const resultEl = document.getElementById("result");
-const checkButton = document.getElementById("checkButton");
-
-function normalize(value) {
-  return value
-    .toLocaleLowerCase()
+function normalize(s){
+  return s.toLowerCase()
     .normalize("NFKC")
-    .replace(/[.,!?·'"’‘“”()\[\]{}]/g, "")
-    .replace(/\s+/g, "")
-    .replace(/㎢/g, "km2")
-    .trim();
+    .replace(/[\s,，.。!?·'"’‘“”()[\]{}]/g,"");
 }
 
-function editDistance(a, b) {
-  const dp = Array.from(
-    { length: a.length + 1 },
-    () => Array(b.length + 1).fill(0)
-  );
-
-  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-
-  for (let i = 1; i <= a.length; i++) {
-    for (let j = 1; j <= b.length; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(
-        dp[i - 1][j] + 1,
-        dp[i][j - 1] + 1,
-        dp[i - 1][j - 1] + cost
+function distance(a,b){
+  const row = Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){
+    let prev=row[0];
+    row[0]=i;
+    for(let j=1;j<=b.length;j++){
+      const old=row[j];
+      row[j]=Math.min(
+        row[j]+1,
+        row[j-1]+1,
+        prev+(a[i-1]===b[j-1]?0:1)
       );
+      prev=old;
     }
   }
-  return dp[a.length][b.length];
+  return row[b.length];
 }
 
-function matchesAlias(userAnswer, aliases) {
-  const user = normalize(userAnswer);
-  if (!user) return false;
-
-  return aliases.some(alias => {
-    const target = normalize(alias);
-    if (user === target) return true;
-
-    // 짧은 단어는 오타 허용을 줄여 오답이 정답으로 처리되는 것을 방지
-    const allowedErrors = target.length >= 8 ? 2 :
-                          target.length >= 4 ? 1 : 0;
-
-    return allowedErrors > 0 &&
-      Math.abs(user.length - target.length) <= allowedErrors &&
-      editDistance(user, target) <= allowedErrors;
+function matches(input, aliases){
+  const value=normalize(input);
+  return aliases.some(alias=>{
+    const target=normalize(alias);
+    if(value===target)return true;
+    const limit=target.length>=8?2:target.length>=4?1:0;
+    return limit>0 &&
+      Math.abs(value.length-target.length)<=limit &&
+      distance(value,target)<=limit;
   });
 }
 
-function isCorrect(userAnswer, item) {
-  if (item.area) {
-    const digits = userAnswer.replace(/,/g, "").replace(/\s/g, "");
-    return digits === "108889";
+function checkAnswer(input){
+  if(current.foods){
+    const parts=input.split(/[,，、/]+/).map(normalize).filter(Boolean);
+    if(parts.length<3)return false;
+    return current.foods.every(group=>
+      parts.some(part=>matches(part,group))
+    );
   }
-
-  if (item.foods) {
-    // 세 가지 음식 이름을 모두 포함해야 정답
-    return item.foods.every(food => matchesAlias(userAnswer, food));
+  if(current.q.includes("면적")){
+    return input.replace(/[,\s]/g,"")==="108889";
   }
-
-  return matchesAlias(userAnswer, item.answers);
+  return matches(input,current.a);
 }
 
-function getCorrectAnswer(item) {
-  if (item.area) return "108,889 km²";
-  if (item.foods) return "따말, 페피안, 까끼익";
-  if (item.question.includes("인구")) return "약 1,700만 명";
-  if (item.question.includes("안녕하세요")) return "Hola (올라)";
-  if (item.question.includes("연 축제")) return "11월";
-  if (item.question.includes("Canicas")) return "구슬치기";
-  if (item.question.includes("호수")) return "아티틀란 호수";
-  if (item.question.includes("수도")) return "과테말라시티 (Guatemala City)";
-  if (item.question.includes("종교")) return "기독교 (가톨릭과 개신교)";
-  if (item.question.includes("화폐")) return "케찰 (Quetzal)";
-  return item.answers[0];
+function getAnswer(item){
+  if(item.foods)return "따말, 페피안, 까끼익";
+  if(item.q.includes("인구"))return "약 1,700만 명";
+  if(item.q.includes("안녕하세요"))return "Hola (올라)";
+  if(item.q.includes("축제"))return "11월";
+  if(item.q.includes("Canicas"))return "구슬치기";
+  if(item.q.includes("호수"))return "아티틀란 호수";
+  if(item.q.includes("면적"))return "108,889 km²";
+  if(item.q.includes("수도"))return "과테말라시티";
+  if(item.q.includes("종교"))return "기독교 (가톨릭과 개신교)";
+  if(item.q.includes("화폐"))return "케찰 (Quetzal)";
+  return item.a[0];
 }
 
-function drawQuestion() {
+function draw(){
   let index;
-  do {
-    index = Math.floor(Math.random() * questions.length);
-  } while (questions.length > 1 && index === previousIndex);
-
-  previousIndex = index;
-  currentQuestion = questions[index];
-  answered = false;
-
-  numberEl.textContent = "문제 10개 중 무작위로 1개 출제";
-  questionEl.textContent = currentQuestion.question;
-  inputEl.value = "";
-  inputEl.disabled = false;
-  inputEl.placeholder = "정답을 입력하세요";
-  hintEl.textContent = currentQuestion.hint;
-  resultEl.textContent = "";
-  resultEl.className = "result";
-  checkButton.disabled = false;
-  checkButton.textContent = "정답 확인";
-  inputEl.focus();
+  do{
+    index=Math.floor(Math.random()*questions.length);
+  }while(questions.length>1&&index===previous);
+  previous=index;
+  current=questions[index];
+  answered=false;
+  $("question").textContent=current.q;
+  $("hint").textContent=current.hint;
+  $("answer").value="";
+  $("answer").disabled=false;
+  $("check").disabled=false;
+  $("result").className="";
+  $("feedback").textContent="";
+  $("correctAnswer").textContent="";
+  $("answer").focus();
 }
 
-document.getElementById("quizForm").addEventListener("submit", function(event) {
+$("form").addEventListener("submit",event=>{
   event.preventDefault();
-  if (answered || !currentQuestion) return;
-
-  const userAnswer = inputEl.value.trim();
-  if (!userAnswer) {
-    resultEl.className = "result wrong";
-    resultEl.textContent = "먼저 정답을 입력해 주세요!";
+  if(answered)return;
+  const input=$("answer").value.trim();
+  if(!input){
+    $("answer").focus();
     return;
   }
-
-  answered = true;
-  inputEl.disabled = true;
-  checkButton.disabled = true;
-
-  const correct = isCorrect(userAnswer, currentQuestion);
-  const correctAnswer = getCorrectAnswer(currentQuestion);
-
-  if (correct) {
-    resultEl.className = "result correct";
-    resultEl.innerHTML =
-      '<strong>🎉 정답입니다!</strong><div class="answer"></div>';
-  } else {
-    resultEl.className = "result wrong";
-    resultEl.innerHTML =
-      '<strong>아쉽지만 오답이에요!</strong><div class="answer"></div>';
-  }
-
-  const answerLine = resultEl.querySelector(".answer");
-  answerLine.textContent = "정답: " + correctAnswer;
+  answered=true;
+  const correct=checkAnswer(input);
+  $("result").className="show "+(correct?"good":"bad");
+  $("feedback").textContent=correct
+    ?"🎉 정답입니다!"
+    :"아쉽지만 오답이에요!";
+  $("correctAnswer").textContent="정답: "+getAnswer(current);
+  $("answer").disabled=true;
+  $("check").disabled=true;
 });
 
-document.getElementById("nextButton").addEventListener("click", drawQuestion);
-
-drawQuestion();
+$("next").addEventListener("click",draw);
+draw();
 </script>
 </body>
 </html>
